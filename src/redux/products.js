@@ -30,7 +30,7 @@ export const productsSlice = createSlice({
 });
 
 
-export const { getProducts } = productsSlice.actions;
+export const { getProducts, getProduct } = productsSlice.actions;
 
 export function getProductsApi() {
     return async (dispatch) => {
