@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Row, Col, Image, ListGroup, Button, Card, Form } from 'react-bootstrap';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
@@ -10,6 +10,7 @@ import { getProductApi } from '../redux/products';
 export default function ProductScreen() {
     const dispatch = useDispatch();
     const params = useParams();
+    const navigate = useNavigate();
     const [qty, setQty] = useState(1);
     const { product, isLoading, error } = useSelector((state) => state.products);
 
@@ -18,6 +19,7 @@ export default function ProductScreen() {
     }, [dispatch, params]);
 
     const addToCart = () => {
+        navigate(`/cart/${params.id}?qty=${qty}`);
     };
 
     
@@ -44,7 +46,7 @@ export default function ProductScreen() {
                             Price: $ {product.price}
                         </ListGroup.Item>
                         <ListGroup.Item>
-                            Description:  {product.description}
+                            Description: {product.description}
                         </ListGroup.Item>
                     </ListGroup>
                 </Col>
