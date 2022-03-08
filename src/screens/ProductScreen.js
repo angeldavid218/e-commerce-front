@@ -25,7 +25,7 @@ export default function ProductScreen() {
     
     return (
         <div>
-            <Link to='/' className='btn btn-light'>Go back</Link>
+            <Link to='/' className='btn btn-light mb-4'>Go back</Link>
             {
                 isLoading ? <Loader />
                 : error ? <Message variant={'danger'} > {error} </Message>

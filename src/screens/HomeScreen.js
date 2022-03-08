@@ -5,6 +5,7 @@ import Product from '../components/Product';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { getProductsApi } from '../redux/products';
+
 function HomeScreen() {
     const dispatch = useDispatch();
     useEffect(() => {
