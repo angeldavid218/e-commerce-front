@@ -3,9 +3,13 @@ import axios from '../utils/axios';
 
 
 const cartItemsFromStorage = localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [];
+const shippingInfoFromStorage = localStorage.getItem('shippingInfo') ? JSON.parse(localStorage.getItem('shippingInfo')) : {};
+const paymentMethodFromStorage = localStorage.getItem('paymentMethod') ? JSON.parse(localStorage.getItem('paymentMethod')) : {};
 const initialState = {
     isLoading: false,
     cartItems: cartItemsFromStorage,
+    shippingInfo: shippingInfoFromStorage,
+    paymentMethod: paymentMethodFromStorage,
     error: false,
   }
 export const cartSlice = createSlice({
@@ -35,6 +39,14 @@ export const cartSlice = createSlice({
             state.error = action.payload;
         },
 
+        saveShippingAddressSuccess(state, action) {
+            state.shippingInfo = action.payload;
+        },
+
+        savePaymentMethodSuccess(state, action) {
+            state.paymentMethod = action.payload;
+        },
+
         getItems(state) {
             return state.cartItems;
         },
@@ -47,7 +59,7 @@ export const cartSlice = createSlice({
 });
 
 
-export const { addItem, getItems } = cartSlice.actions;
+export const { addItem, getItems, saveShippingAddressSuccess, savePaymentMethodSuccess } = cartSlice.actions;
 
 
 export function addToCart (id, qty) {
@@ -76,6 +88,30 @@ export function removeFromCart(id) {
     return (dispatch, getState) => {
         dispatch(cartSlice.actions.removeItem(id));
         localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems));
+    }
+}
+
+
+export function saveShippingAddress(data) {
+    return async (dispatch) => {
+        try {
+          //  const { data } = await axios.put(`users/update`, userRequest);
+            dispatch(saveShippingAddressSuccess(data));
+            localStorage.setItem('shippingInfo', JSON.stringify(data));
+        } catch(error) {
+            dispatch(onErrors(error?.response?.data?.detail));
+        }
+    }
+}
+
+export function savePaymentMethod(data) {
+    return async (dispatch) => {
+        try {
+            dispatch(savePaymentMethodSuccess(data));
+            localStorage.setItem('paymentMethod', JSON.stringify(data));
+        } catch(error) {
+            dispatch(onErrors(error?.response?.data?.detail));
+        }
     }
 }
 

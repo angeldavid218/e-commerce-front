@@ -3,11 +3,12 @@ import axios from '../utils/axios';
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
 
+
 const initialState = {
     isLoading: false,
     user: userInfoFromStorage,
     error: false,
-    errors: {}
+    errors: {}    
   }
 export const userSlice = createSlice({
     name: 'users',
@@ -18,6 +19,16 @@ export const userSlice = createSlice({
         },
 
         userLoginSuccess(state, action) {
+            state.isLoading = false;
+            state.user = action.payload;
+        },
+
+        userRegisterSuccess(state, action) {
+            state.isLoading = false;
+            state.user = action.payload;
+        },
+
+        userDetailsSuccess(state, action) {
             state.isLoading = false;
             state.user = action.payload;
         },
@@ -37,7 +48,7 @@ export const userSlice = createSlice({
 });
 
 
-export const { userLoginSuccess, loading, onErrors, logoutSuccess } = userSlice.actions;
+export const { userLoginSuccess, loading, onErrors, logoutSuccess, userRegisterSuccess, userDetailsSuccess } = userSlice.actions;
 
 export function login(email, password) {
     loading();
@@ -66,10 +77,66 @@ export function logout() {
     
 }
 
+export function register(email, password, name) {
+    loading();
+    return async (dispatch) => {
+        try {
+            const config = {
+                headers: {
+                    'content-type': 'application/json'
+                }
+            };
+            const {data} = await axios.post('users/register', {username: email, password, name}, config);
+            dispatch(userRegisterSuccess(data));
+            localStorage.setItem('userInfo', JSON.stringify(data));
+        } catch(error) {
+            dispatch(onErrors(error?.response?.data?.detail));
+        }
+    }
+}
+
+
+export function getUserDetails(id) {
+    loading();
+    return async (dispatch, getState) => {
+        try {
+            const { user } = getState(); 
+            const config = {
+                headers: {
+                    'content-type': 'application/json',
+                     Authorization: `Bearer ${user.token}`
+                }
+            };
+            const { data } = await axios.get(`users/${id}`, {}, config);
+            dispatch(userDetailsSuccess(data));
+        } catch(error) {
+            dispatch(onErrors(error?.response?.data?.detail));
+        }
+    }
+}
+
+export function updateUserProfile(userRequest) {
+    loading();
+    return async (dispatch, getState) => {
+        try {
+            const { user } = getState(); 
+            const config = {
+                headers: {
+                    'content-type': 'application/json',
+                     Authorization: `Bearer ${user?.user?.token}`
+                }
+            };
+            const { data } = await axios.put(`users/update`, userRequest, config);
+            dispatch(userDetailsSuccess(data));
+            localStorage.setItem('userInfo', JSON.stringify(data));
+        } catch(error) {
+            dispatch(onErrors(error?.response?.data?.detail));
+        }
+    }
+}
+
+
+
+
 
 export default userSlice.reducer;
-
-
-
-
-
