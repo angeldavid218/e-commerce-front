@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
@@ -7,16 +7,39 @@ import Message from '../components/Message';
 import FormContainer from '../components/FormContainer';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { saveShippingAddress } from '../redux/cart';
+import { createOrder  } from '../redux/orders';
 
 function PlaceOrderScreen() {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const orderCreate = useSelector((state) => state.orders);
+    const {order, error} = orderCreate; 
     const cart = useSelector((state) => state.cart);
     const { cartItems } = cart;
     const itemsPrice = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2); 
     const shippingPrice = (itemsPrice > 100 ? 0 : 10).toFixed(2);
     const taxPrice = Number((0.002) * itemsPrice).toFixed(2);
     const totalPrice = Number(Number(itemsPrice) + Number(shippingPrice) + Number(taxPrice));
+    
+    if (!cart.paymentMethod) {
+        navigate('/payment');
+    }
+ /*    useEffect(() => {
+        if (error) {
+            navigate(`/order/${order._id}}`);
+        }
+    }, [error, order]); */
+
     const placeOrder = () => {
-        console.log('placed');
+        dispatch(createOrder({
+            orderItems: cartItems,
+            shippingAddress: cart.shippingInfo,
+            paymentMethod: cart.paymentMethod,
+            itemsPrice: itemsPrice,
+            shippingPrice,
+            taxPrice,
+            totalPrice
+        }))
     };
     return (
         <div>
