@@ -21,12 +21,15 @@ export const ordersSlice = createSlice({
         onErrors(state, action) {
             state.isLoading = false;
             state.error = action.payload;
+        },
+        resetOrder(state) {
+            state.order = {};
         }
     }
 });
 
 
-export const { createOrderSuccess, onErrors } = ordersSlice.actions;
+export const { createOrderSuccess, onErrors, resetOrder } = ordersSlice.actions;
 
 
 export const createOrder = (order) => {

@@ -7,7 +7,8 @@ import Message from '../components/Message';
 import FormContainer from '../components/FormContainer';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { saveShippingAddress } from '../redux/cart';
-import { createOrder  } from '../redux/orders';
+import { createOrder, resetOrder } from '../redux/orders';
+import { clearItems } from '../redux/cart'
 
 function PlaceOrderScreen() {
     const navigate = useNavigate();
@@ -24,11 +25,13 @@ function PlaceOrderScreen() {
     if (!cart.paymentMethod) {
         navigate('/payment');
     }
- /*    useEffect(() => {
-        if (error) {
+    useEffect(() => {
+        if (order?.orderItems?.length > 0) {
             navigate(`/order/${order._id}}`);
+            dispatch(resetOrder());
+            dispatch(clearItems());
         }
-    }, [error, order]); */
+    }, [order]);
 
     const placeOrder = () => {
         dispatch(createOrder({
@@ -39,7 +42,7 @@ function PlaceOrderScreen() {
             shippingPrice,
             taxPrice,
             totalPrice
-        }))
+        }));
     };
     return (
         <div>

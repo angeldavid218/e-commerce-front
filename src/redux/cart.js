@@ -54,12 +54,17 @@ export const cartSlice = createSlice({
         removeItem(state, action) {
              state.cartItems = state.cartItems.filter((p) => p.product !== action.payload);
              return state;
+        },
+
+        clearItems(state) {
+            state.cartItems = [];
+            localStorage.removeItem('cartItems');
         }
     }
 });
 
 
-export const { addItem, getItems, saveShippingAddressSuccess, savePaymentMethodSuccess } = cartSlice.actions;
+export const { addItem, getItems, saveShippingAddressSuccess, savePaymentMethodSuccess, clearItems } = cartSlice.actions;
 
 
 export function addToCart (id, qty) {
